@@ -9,8 +9,8 @@ from firebase_admin import storage
 
 cred = credentials.Certificate("serviceAccountKey.json")
 firebase_admin.initialize_app(cred,{
-    'databaseURL': "https://facerecognitionwithrealt-507bc-default-rtdb.firebaseio.com/",
-   'storageBucket': "facerecognitionwithrealt-507bc.appspot.com"
+    'databaseURL': "https://faceattendancerealtime-fb9f2-default-rtdb.firebaseio.com/",
+    # 'storageBucket': "https://aenddkufktyfuenuntjc.supabase.co/storage/v1/s3"
 })
 
 # importing student images
@@ -24,9 +24,10 @@ for path in PathList:
     studentIds.append(os.path.splitext(path)[0])
 
     fileName = f'{folderPath}/{path}'
-    bucket =storage.bucket()
-    blob = bucket.blob(fileName)
-    blob.upload_from_filename(fileName)
+    print(fileName)
+    # bucket =storage.bucket()
+    # blob = bucket.blob(fileName)
+    # blob.upload_from_filename(fileName)
     # print(path)
     # print(os.path.splitext(path)[0])
 print(studentIds)
