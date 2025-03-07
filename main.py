@@ -7,16 +7,12 @@ import face_recognition
 import firebase_admin
 from firebase_admin import credentials
 from firebase_admin import db
-from firebase_admin import storage
 from datetime import datetime
 
 cred = credentials.Certificate("serviceAccountKey.json")
 firebase_admin.initialize_app(cred,{
-    'databaseURL': "https://facerecognitionwithrealt-507bc-default-rtdb.firebaseio.com/",
-   'storageBucket': "facerecognitionwithrealt-507bc.appspot.com"
+    'databaseURL': "https://faceattendancerealtime-fb9f2-default-rtdb.firebaseio.com/",
 })
-
-bucket = storage.bucket()
 
 cap = cv2.VideoCapture(0)
 cap.set(3, 640)
@@ -97,10 +93,16 @@ while True:
                 studentInfo = db.reference(f'Students/{id}').get()
                 print(studentInfo)
 
-                #get image from storage
-                blob = bucket.get_blob(f'images/{id}.png')
-                array = np.frombuffer(blob.download_as_string(), np.uint8)
-                imgStudent = cv2.imdecode(array, cv2.COLOR_BGR2RGB)
+                # Get image from images folder at the root level
+                imgPath = f'images/{id}.png'  # Accessing the image directly from the local folder
+                print(imgPath)
+                imgStudent = cv2.imread(imgPath)  # Read the image directly
+
+                if imgStudent is not None:  # Check if the image was loaded successfully
+                    imgStudent = cv2.resize(imgStudent, (216, 216))  # Resize if necessary
+                    imgBackground[175:175+216, 909:909+216] = imgStudent
+                else:
+                    print("Image not found or could not be loaded.")
 
                 #update attendences
                 datetimeObject = datetime.strptime(studentInfo['last_attendance_time'],
@@ -117,11 +119,11 @@ while True:
                     counter = 0
                     imgBackground[44:44 + 633, 808:808 + 414] = imgModeList[modeType]
 
-
             if 10 < counter < 20:
                 modeType = 2
 
             imgBackground[44:44 + 633, 808:808 + 414] = imgModeList[modeType]
+
             if modeType != 3:
 
                 if counter <= 10:
@@ -160,9 +162,15 @@ while True:
                     studentInfo = []
                     imgStudent = []
                     imgBackground[44:44 + 633, 808:808 + 414] = imgModeList[modeType]
+
     else:
         modeType = 0
         counter = 0
+
+    # Check for 'q' key press to exit
+    if cv2.waitKey(1) & 0xFF == ord('q'):
+        break
+
     # cv2.imshow("Webcam", img)   #camara live
     cv2.imshow("Face Attendance", imgBackground)
     cv2.waitKey(1)
