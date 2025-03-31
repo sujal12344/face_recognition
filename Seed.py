@@ -60,18 +60,17 @@ data = {
             "year": 2,
             "last_attendance_time": "2022-12-11 00:54:34"
         },
+    "100005":
+        {
+            "name": "Sakshi",
+            "major": "Student",
+            "starting_year": 2022,
+            "total_attendance": 0,
+            "standing": "G",
+            "year": 2,
+            "last_attendance_time": "2022-12-11 00:54:34"
+        },
 }
 
 for key, value in data.items():
     ref.child(key).set(value)
-
-
-#I want to remove fields from 1 to in student database
-# ref.delete()
-
-# data = db.reference('Student').get()
-# print(data)
-
-#delete database
-# db.reference('Students').delete()
-# db.reference('Studentstfgnvhbn').delete()
